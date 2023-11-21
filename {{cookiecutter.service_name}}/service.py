@@ -7,7 +7,8 @@ import pathlib
 import yaml
 import zoo
 import zoo_wes_runner
-from zoo_wes_runner import ExecutionHandler, ZooWESRunner
+from zoo_calrissian_runner.handlers import ExecutionHandler
+from zoo_wes_runner import ZooWESRunner
 
 
 class WESRunnerExecutionHandler(ExecutionHandler):
