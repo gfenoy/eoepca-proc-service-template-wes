@@ -11,6 +11,13 @@ from zoo_wes_runner import ZooWESRunner
 
 
 class WESRunnerExecutionHandler:
+    def __init__(self, **kwargs):
+        self.__dict__.update(kwargs)
+        self.job_id = None
+
+    def set_job_id(self, job_id):
+        self.job_id = job_id
+
     def get_additional_parameters(self):
         return {
             "ADES_STAGEOUT_AWS_SERVICEURL": os.getenv("AWS_SERVICE_URL", None),
