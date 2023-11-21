@@ -7,11 +7,10 @@ import pathlib
 import yaml
 import zoo
 import zoo_wes_runner
-from zoo_calrissian_runner.handlers import ExecutionHandler
 from zoo_wes_runner import ZooWESRunner
 
 
-class WESRunnerExecutionHandler(ExecutionHandler):
+class WESRunnerExecutionHandler:
     def get_additional_parameters(self):
         return {
             "ADES_STAGEOUT_AWS_SERVICEURL": os.getenv("AWS_SERVICE_URL", None),
