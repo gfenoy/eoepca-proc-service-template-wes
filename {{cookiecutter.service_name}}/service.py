@@ -1,6 +1,7 @@
 import base64
 import importlib
 import json
+import logging
 import os
 import pathlib
 
@@ -15,28 +16,35 @@ class WESRunnerExecutionHandler:
         self.__dict__.update(kwargs)
         self.job_id = None
 
+    def local_get_file(self, fileName):
+        """
+        Read and load a yaml file
+
+        :param fileName the yaml file to load
+        """
+        try:
+            with open(fileName, 'r') as file:
+                additional_params = yaml.safe_load(file)
+            return additional_params
+        # if file does not exist
+        except FileNotFoundError:
+            return {}
+        # if file is empty
+        except yaml.YAMLError:
+            return {}
+        # if file is not yaml
+        except yaml.scanner.ScannerError:
+            return {}
+        except Exception():
+            return {}
+
     def set_job_id(self, job_id):
         self.job_id = job_id
 
     def get_additional_parameters(self):
-        return {
-            "ADES_STAGEOUT_AWS_SERVICEURL": os.getenv("AWS_SERVICE_URL", None),
-            "ADES_STAGEOUT_AWS_REGION": os.getenv("AWS_REGION", None),
-            "ADES_STAGEOUT_AWS_ACCESS_KEY_ID": os.getenv("AWS_ACCESS_KEY_ID", None),
-            "ADES_STAGEOUT_AWS_SECRET_ACCESS_KEY": os.getenv(
-                "AWS_SECRET_ACCESS_KEY", None
-            ),
-            "ADES_STAGEIN_AWS_SERVICEURL": os.getenv("AWS_SERVICE_URL", None),
-            "ADES_STAGEIN_AWS_REGION": os.getenv("AWS_REGION", None),
-            "ADES_STAGEIN_AWS_ACCESS_KEY_ID": os.getenv("AWS_ACCESS_KEY_ID", None),
-            "ADES_STAGEIN_AWS_SECRET_ACCESS_KEY": os.getenv(
-                "AWS_SECRET_ACCESS_KEY", None
-            ),
-            "ADES_STAGEOUT_OUTPUT": os.getenv("ADES_STAGEOUT_OUTPUT", None)
-        }
+        return self.local_get_file('/assets/additional_inputs.yaml')
 
     def handle_outputs(self, log, output, usage_report, tool_logs):
-        
         os.makedirs(
             os.path.join(self.conf["main"]["tmpPath"], self.job_id),
             mode=0o777,
