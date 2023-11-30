@@ -42,10 +42,7 @@ class WESRunnerExecutionHandler:
         self.job_id = job_id
 
     def get_additional_parameters(self):
-        params = self.local_get_file('/assets/additional_inputs.yaml')
-        # Inject the process ID.
-        extras = {"process": self.job_id}
-        return {**extras, **params}
+        return self.local_get_file('/assets/additional_inputs.yaml')
 
     def handle_outputs(self, log, output, usage_report, tool_logs):
         os.makedirs(
