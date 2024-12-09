@@ -42,7 +42,23 @@ class WESRunnerExecutionHandler:
         self.job_id = job_id
 
     def get_additional_parameters(self):
-        return self.local_get_file('/assets/additional_inputs.yaml')
+        # sets the additional parameters for the execution
+        # of the wrapped Application Package
+
+        logger.info("get_additional_parameters")
+
+        additional_parameters = {
+            "s3_bucket": "results",
+            "sub_path": self.conf["lenv"]["usid"],
+            "region_name": "us-east-1",
+            "aws_secret_access_key": "test",
+            "aws_access_key_id": "test",
+            "endpoint_url": "http://eoap-zoo-project-localstack.eoap-zoo-project.svc.cluster.local:4566",
+        }
+
+        logger.info(f"additional_parameters: {additional_parameters.keys()}")
+
+        return additional_parameters
 
     def handle_outputs(self, log, output, usage_report, tool_logs):
         os.makedirs(
