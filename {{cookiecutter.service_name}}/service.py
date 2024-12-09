@@ -45,7 +45,7 @@ class WESRunnerExecutionHandler:
         # sets the additional parameters for the execution
         # of the wrapped Application Package
 
-        logger.info("get_additional_parameters")
+        zoo.info("get_additional_parameters")
 
         additional_parameters = {
             "s3_bucket": "results",
@@ -53,10 +53,10 @@ class WESRunnerExecutionHandler:
             "region_name": "us-east-1",
             "aws_secret_access_key": "test",
             "aws_access_key_id": "test",
-            "endpoint_url": "http://eoap-zoo-project-localstack.eoap-zoo-project.svc.cluster.local:4566",
+            "endpoint_url": "http://localhost:4900",
         }
 
-        logger.info(f"additional_parameters: {additional_parameters.keys()}")
+        zoo.info(f"additional_parameters: {additional_parameters.keys()}")
 
         return additional_parameters
 
