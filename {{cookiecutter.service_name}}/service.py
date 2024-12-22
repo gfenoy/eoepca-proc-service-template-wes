@@ -100,9 +100,21 @@ def {{cookiecutter.workflow_id |replace("-", "_")  }}(conf, inputs, outputs):
     if exit_status == zoo.SERVICE_SUCCEEDED:
         # TODO remove hardcoded key StacCatalogUri which is defined in the main.cwl
         # Remove the "stac" output from runner.outputs.outputs["stac"]["value"] in previous phases
-        out = {"StacCatalogUri": runner.outputs.outputs["stac"]["value"]["StacCatalogUri"] }
-        json_out_string= json.dumps(out, indent=4)
-        outputs["stac"]["value"]=json_out_string
+        json_out_string= json.dumps(runner.demo_outputs["s3_catalog_output"], indent=4)
+        outputs[list(outputs.keys())[0]]["value"]=json_out_string
+        with open(os.path.join(
+                    conf["main"]["tmpPath"],
+                    f"{conf['lenv']['Identifier']}-{conf['lenv']['usid']}.log"
+                ),"w+") as f:
+            f.write(runner.run_log_content)
+        conf["service_logs"]={
+            "url": os.path.join(
+                conf["main"]["tmpUrl"],
+                f"{conf['lenv']['Identifier']}-{conf['lenv']['usid']}.log"
+            ),
+            "title": f"TOIL run log",
+            "rel": "related",
+        }
         return zoo.SERVICE_SUCCEEDED
 
     else:
