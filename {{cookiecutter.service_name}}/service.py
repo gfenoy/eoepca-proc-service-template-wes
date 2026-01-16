@@ -244,6 +244,7 @@ def {{cookiecutter.workflow_id |replace("-", "_")  }}(conf, inputs, outputs):
         outputs=outputs,
         execution_handler=execution_handler,
     )
+    runner.monitor_interval=10
     exit_status = runner.execute()
 
     # Fetch the logs whatever the exit status is
