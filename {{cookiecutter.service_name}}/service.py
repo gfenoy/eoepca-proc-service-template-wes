@@ -41,14 +41,6 @@ class WESRunnerExecutionHandler(CommonExecutionHandler):
     """
 
     def __init__(self, conf=None, outputs=None, **kwargs):
-        """
-        Initialize the execution handler.
-
-        Args:
-            conf (dict): ZOO-Project configuration
-            outputs (dict): Service outputs dictionary
-            **kwargs: Additional arguments passed to parent class
-        """
         super().__init__(conf=conf, **kwargs)
         self.outputs = outputs or {}
         self.http_proxy_env = os.environ.get("HTTP_PROXY", None)
@@ -70,19 +62,6 @@ class WESRunnerExecutionHandler(CommonExecutionHandler):
             logger.info(f"Restoring env HTTP_PROXY, to value {self.http_proxy_env}")
 
     def post_execution_hook(self, log, output, usage_report, tool_logs):
-        """
-        Hook executed after workflow completion to process STAC catalog results.
-
-        Configures AWS environment variables, reads the generated STAC catalog,
-        enriches items with storage metadata, and sets the feature collection
-        to be returned.
-
-        Args:
-            log (str): Workflow execution logs
-            output (dict): Raw workflow output results
-            usage_report (dict): Resource usage report
-            tool_logs (str): Tool execution logs
-        """
         try:
             logger.info("Post execution hook")
             self.unset_http_proxy_env()
@@ -115,16 +94,6 @@ class WESRunnerExecutionHandler(CommonExecutionHandler):
             self.restore_http_proxy_env()
 
     def setOutput(self, outputName, values):
-        """
-        Process and set output values from STAC catalog.
-
-        Extracts STAC catalog from workflow output, processes items,
-        enriches with storage metadata, and creates ItemCollection.
-
-        Args:
-            outputName (str): Name of the output parameter
-            values (dict): Dictionary containing the workflow output
-        """
         logger.info(f"Processing output '{outputName}' from workflow results")
         output = self.outputs[outputName]
 
@@ -231,15 +200,6 @@ class WESRunnerExecutionHandler(CommonExecutionHandler):
         logger.info("Output successfully set")
 
     def local_get_file(self, fileName):
-        """
-        Load and parse a YAML configuration file.
-
-        Args:
-            fileName (str): Path to the YAML file to load
-
-        Returns:
-            dict: Parsed YAML content or empty dict on error
-        """
         try:
             with open(fileName) as yaml_file:
                 yaml_data = yaml.safe_load(yaml_file)
@@ -279,12 +239,6 @@ class WESRunnerExecutionHandler(CommonExecutionHandler):
         return []
 
     def get_additional_parameters(self):
-        """
-        Get additional execution parameters.
-
-        Returns:
-            dict: Additional parameters including S3 credentials and configuration
-        """
         additional_params = self.conf.get("additional_parameters", {}).copy()
 
         # Preserve config values, only fall back to environment if missing
@@ -313,17 +267,6 @@ class WESRunnerExecutionHandler(CommonExecutionHandler):
         return additional_params
 
     def handle_outputs(self, log, output, usage_report, tool_logs):
-        """
-        Handle output files from execution.
-
-        Writes execution logs, output results, and usage reports to files.
-
-        Args:
-            log (str): Execution logs text
-            output (dict): Raw workflow results
-            usage_report (dict): Resource usage report
-            tool_logs (str): Tool execution logs
-        """
         tmpPath = self.conf.get("main", {}).get("tmpPath", "/tmp")
         jobDir = os.path.join(tmpPath, self.job_id) if self.job_id else tmpPath
         
@@ -360,20 +303,6 @@ class WESRunnerExecutionHandler(CommonExecutionHandler):
 
 
 def {{cookiecutter.workflow_id |replace("-", "_")  }}(conf, inputs, outputs):  # noqa
-    """
-    Main workflow service function.
-
-    Loads a CWL (Common Workflow Language) package, executes it via ZooWESRunner
-    and processes STAC catalog results.
-
-    Args:
-        conf (dict): ZOO-Project configuration
-        inputs (dict): Service inputs
-        outputs (dict): Service outputs
-
-    Returns:
-        int: Exit code (SERVICE_SUCCEEDED or SERVICE_FAILED)
-    """
     runner = None
     execution_handler = None
     
