@@ -40,15 +40,9 @@ class WESRunnerExecutionHandler(CommonExecutionHandler):
     processing of STAC catalogs and output management.
     """
 
-    def __init__(self, conf=None, outputs=None, **kwargs):
-        super().__init__(conf=conf, **kwargs)
-        self.outputs = outputs or {}
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.http_proxy_env = os.environ.get("HTTP_PROXY", None)
-        self.job_id = None
-        # Initialize namespace name for cases where parent __init__ may not set it
-        # (workaround for ZooWESRunner inheritance chain issue)
-        if not hasattr(self, '_namespace_name'):
-            self._namespace_name = None
 
     def unset_http_proxy_env(self):
         """Temporarily unset HTTP_PROXY environment variable."""
@@ -199,44 +193,8 @@ class WESRunnerExecutionHandler(CommonExecutionHandler):
         output["value"] = json.dumps(collection_dict, indent=2)
         logger.info("Output successfully set")
 
-    def local_get_file(self, fileName):
-        try:
-            with open(fileName) as yaml_file:
-                yaml_data = yaml.safe_load(yaml_file)
-                logger.info(f"Loaded YAML file: {fileName}")
-                return yaml_data
-        except FileNotFoundError:
-            logger.error(f"File not found: {fileName}")
-            return {}
-        except yaml.YAMLError as e:
-            logger.error(f"Error parsing YAML file {fileName}: {str(e)}")
-            return {}
-        except Exception as e:
-            logger.error(f"Unexpected error loading file {fileName}: {str(e)}")
-            return {}
-
-    def set_job_id(self, job_id):
-        """Set the job identifier."""
-        self.job_id = job_id
-        logger.info(f"Job ID set to: {job_id}")
-
     def get_namespace(self) -> str:
         return None
-
-    def get_pod_env_vars(self):
-        """Get pod environment variables configuration."""
-        logger.info("Getting pod environment variables")
-        return {}
-
-    def get_pod_node_selector(self):
-        """Get pod node selector configuration."""
-        logger.info("Getting pod node selector")
-        return {}
-
-    def get_secrets(self):
-        """Load image pull secrets from configuration."""
-        logger.info("Getting secrets")
-        return []
 
     def get_additional_parameters(self):
         additional_params = self.conf.get("additional_parameters", {}).copy()
